@@ -2,31 +2,59 @@
   <div id="app">
     <img src="./assets/logo.png">
     <h1>FcMusic</h1>
+    <select name="" id="" v-model= "selectedCountry">
+      <option v-for= "country in countries" :value= "country.value" :key= "country.value">
+        {{ country.name }}
+      </option>
+    </select>
     <ul>
-      <li v-for= "artist in artists" :key= "artist.name"> {{ artist.name }} </li>
+      <artist v-for= "artist in artists" :artist= "artist" :key= "artist.mbid" >
+
+      </artist>
+      <!-- <li v-for= "artist in artists" :key= "artist.name"> {{ artist.name }} </li>
       <li><a href="https://forum.vuejs.org" target="_blank">Forum</a></li>
       <li><a href="https://chat.vuejs.org" target="_blank">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank">Twitter</a></li>
+      <li><a href="https://twitter.com/vuejs" target="_blank">Twitter</a></li> -->
     </ul>
   </div>
 </template>
 
 <script>
-import getArtist from './api'
+import getArtists from './api'
+import Artist from './components/Artist.vue'
 
 export default {
   name: 'app',
   data () {
     return {
-      artists:[]
+      artists:[],
+      countries: [
+        { name : 'Colombia', value: 'colombia' },
+        { name : 'Argentina', value: 'argentina' },
+        { name : 'España', value: 'spain' }
+      ],
+      selectedCountry : 'colombia'
+    }
+  },
+  components: {
+    Artist : Artist
+  },
+  methods: {
+    refreshArtist(){
+      const _this = this
+      getArtists(this.selectedCountry)
+        .then(function(artists){
+          _this.artists = artists
+        })
     }
   },
   mounted: function (){
-    const _this = this
-    getArtist()
-      .then(function(artists){
-        _this.artists = artists
-      })
+    this.refreshArtist();
+  },
+  watch:{
+    selectedCountry: function () {
+      this.refreshArtist();
+    }
   }
 }
 </script>
