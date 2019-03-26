@@ -7,9 +7,11 @@
         {{ country.name }}
       </option>
     </select>
+    <spinner v-show="cargando">
+
+    </spinner>
     <ul>
       <artist v-for= "artist in artists" :artist= "artist" :key= "artist.mbid" >
-
       </artist>
       <!-- <li v-for= "artist in artists" :key= "artist.name"> {{ artist.name }} </li>
       <li><a href="https://forum.vuejs.org" target="_blank">Forum</a></li>
@@ -22,6 +24,7 @@
 <script>
 import getArtists from './api'
 import Artist from './components/Artist.vue'
+import Spinner from './components/Spinner.vue'
 
 export default {
   name: 'app',
@@ -33,18 +36,23 @@ export default {
         { name : 'Argentina', value: 'argentina' },
         { name : 'España', value: 'spain' }
       ],
-      selectedCountry : 'colombia'
+      selectedCountry : 'colombia',
+      cargando: true
     }
   },
   components: {
-    Artist : Artist
+    Artist,
+    Spinner
   },
   methods: {
     refreshArtist(){
       const _this = this
+      this.artists = []
+      this.cargando = true
       getArtists(this.selectedCountry)
         .then(function(artists){
           _this.artists = artists
+          _this.cargando = false
         })
     }
   },
